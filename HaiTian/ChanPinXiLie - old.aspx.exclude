@@ -1,0 +1,227 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ChanPinXiLie - old.aspx.cs" Inherits="ChanPinXiLie" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+<script src="jquery/jquery-1.11.3/jquery.js"></script>
+<link rel="stylesheet" href="jquery/jquery-ui-1.12.1.custom/jquery-ui.css">
+<script src="jquery/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+    <script type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+    <link rel="stylesheet" href="css/HaiTian.css" />
+    <script src="js/websjy.js"></script>
+    <link rel="stylesheet" href="css/websjy.css" />
+<%--    <script src="js/public.js"></script>
+    <script src="js/CPXL.js"></script>--%>
+    <script type="text/javascript" src="js/jquery.cookie.js"></script>
+<script>
+    $(function () {
+        $("#import").click(function () {
+
+            openShutManager(this, 'importdiv', false)
+
+
+        })
+
+        $("#importC").click(function () {
+
+            var filePath = $(".a-upload input[type='file']").val();
+            if (filePath.indexOf("xlsx") == -1 && filePath.indexOf("xls") == -1) {
+                return false;
+            }
+
+        })
+
+
+        $(".a-upload").on("change", "input[type='file']", function () {
+            var filePath = $(this).val();
+
+            if (filePath.indexOf("xlsx") != -1 || filePath.indexOf("xls") != -1) {
+                $(".fileerrorTip").html("").hide();
+                var arr = filePath.split('\\');
+                var fileName = arr[arr.length - 1];
+                $(".showFileName").html(fileName);
+            } else {
+                $(".showFileName").html("");
+                $(".fileerrorTip").html("导入文件类型有误！").show();
+                return false
+            }
+        })
+
+    })
+</script>
+</head>
+<body>
+    <form id="form1" runat="server">
+
+        <h1 style="text-align: center">产品系列资料</h1>
+
+    <div>
+    <div>
+<%--        <div id="float"  style="float: right;">
+        <table>
+            <tr>
+            <td><asp:TextBox ID="TextBoxQ" class="form-control" runat="server">
+            </asp:TextBox>
+                </td>
+            <td><asp:Button ID="query" runat="server" Text="查询" class="btn btn-default" OnClick="query_Click" />
+                </td>
+                </tr>
+        </table>
+            </div>--%>
+
+        <table id="header">
+            <tr>
+
+                <td>产品系列</td>
+            <td><asp:TextBox ID="cpxl" class="form-control" runat="server" placeholder="输入产品系列" >
+            </asp:TextBox>
+                </td>
+                                <td>供应商</td>
+            <td><asp:TextBox ID="sup" class="form-control" runat="server" placeholder="输入供应商" >
+            </asp:TextBox>
+                </td>
+            <td><asp:Button ID="Button1" runat="server" Text="查询" class="btn btn-default" OnClick="query_Click" />
+                </td>
+
+            </tr>
+    </table>
+
+</div>
+
+
+        <div class="btn-group">
+            <input type="button" id="add" value="新增" class="btn btn-default"></input>
+        <asp:Button ID="Delete" runat="server" Text="删除" OnClientClick="return confirm('确定要删除所选记录吗？')" class="btn btn-default" OnClick="Delete_Click" />
+        <input ID="import" type="button" value="导入" class="btn btn-default" />
+
+            <div id="importdiv" style="">
+                <table border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="lt"></td>
+                        <td class="t"></td>
+                        <td class="rt"></td>
+                    </tr>
+                    <tr>
+                        <td class="l"></td>
+                        <td class="box">
+                            <h3 class="tit"><b>导入</b><a class="cls" href="javascript:;" onclick="openShutManager(this,'importdiv',false)" title="关闭">关闭</a></h3>
+                            <div class="nr">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <a href="javascript:;" class="a-upload">
+                                                <input id="file" type="file" runat="server" />选择文件
+                                            </a>
+</td>
+                                        <td><label id="filename" class="showFileName"></label>
+                                            <label class="fileerrorTip">未选择导入文件</label>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <br />
+                                <asp:Button ID="importC" runat="server" Text="确认导入" class="btn btn-default" OnClick="importC_Click" />
+
+                            </div>
+                        </td>
+                        <td class="r"></td>
+                    </tr>
+                    <tr>
+                        <td class="lb"></td>
+                        <td class="b"></td>
+                        <td class="rb"></td>
+                    </tr>
+                </table>
+                <s><i></i></s>
+            </div>
+
+        </div>
+
+
+    <asp:GridView ID="GridView1" runat="server" CellPadding="0" GridLines="None"
+    AutoGenerateColumns="False" CssClass="table table-bordered table-condensed table-hover"
+    onrowdatabound="GridView1_RowDataBound" AllowPaging="true" PageSize="20"
+    onpageindexchanging="GridView1_PageIndexChanging" 
+    onrowcommand="GridView1_RowCommand" OnDataBound="GridView1_DataBound"
+    onrowcancelingedit="GridView1_RowCancelingEdit" 
+    onrowediting="GridView1_RowEditing" onrowupdating="GridView1_RowUpdating" 
+    onrowdeleting="GridView1_RowDeleting" OnRowCreated="GridView1_RowCreated" EmptyDataText="暂没有数据"
+    EmptyDataRowStyle-HorizontalAlign="Center"   EmptyDataRowStyle-Font-Bold="true" >
+        <Columns>
+            <asp:CommandField ShowEditButton="true" ItemStyle-Wrap="false" UpdateText="保存" ItemStyle-HorizontalAlign="Center" />
+            <asp:TemplateField HeaderText="" ItemStyle-Wrap="false" HeaderStyle-Wrap="false" ItemStyle-HorizontalAlign="Center">
+                <ItemTemplate>
+                    <asp:CheckBox runat="server" ID="cb" Width="20px" />
+                </ItemTemplate>
+            </asp:TemplateField>
+
+            <asp:TemplateField  ItemStyle-Wrap="false" HeaderStyle-Wrap="false">
+                <ItemTemplate>
+                    <asp:Label ID="lbid" runat="server" Text='<%# Bind("id") %>' CssClass="hidden">
+                    </asp:Label>
+                </ItemTemplate>
+                <HeaderTemplate>
+                    <asp:Label ID="lbid" runat="server" Text='<%# Bind("id") %>' CssClass="hidden">
+                    </asp:Label>
+                </HeaderTemplate>
+            </asp:TemplateField>
+            <asp:TemplateField HeaderText="产品系列" ItemStyle-Wrap="false" HeaderStyle-Wrap="false">
+                <ItemTemplate>
+                    <asp:Label ID="lbxl" runat="server" Text='<%# Bind("xiliename") %>'>
+                    </asp:Label>
+                </ItemTemplate>
+                <EditItemTemplate>
+                    <asp:TextBox ID="tbxl" runat="server" Text='<%# Bind("xiliename") %>' CssClass="cpxl form-control" OnTextChanged="tbxl_TextChanged" AutoPostBack="true">
+                    </asp:TextBox>
+                </EditItemTemplate>
+            </asp:TemplateField>
+
+            <asp:TemplateField HeaderText="物料" ItemStyle-Wrap="false" HeaderStyle-Wrap="false">
+                <ItemTemplate>
+                    <asp:Label ID="matname" runat="server" Text='<%# Bind("matname") %>'>
+                    </asp:Label>
+                </ItemTemplate>
+                <EditItemTemplate>
+                    <asp:TextBox ID="matname" runat="server" Text='<%# Bind("matname") %>' CssClass="mat form-control" OnTextChanged="matname_TextChanged" AutoPostBack="true">
+                    </asp:TextBox>
+                </EditItemTemplate>
+            </asp:TemplateField>
+
+            <asp:TemplateField HeaderText="规格" ItemStyle-Wrap="false" HeaderStyle-Wrap="false">
+                <ItemTemplate>
+                    <asp:Label ID="FModel" runat="server" Text='<%# Bind("FModel") %>'>
+                    </asp:Label>
+                </ItemTemplate>
+            </asp:TemplateField>
+            <asp:TemplateField HeaderText="供应商" ItemStyle-Wrap="false" HeaderStyle-Wrap="false">
+                <ItemTemplate>
+                    <asp:Label ID="supname" runat="server" Text='<%# Bind("supname") %>'>
+                    </asp:Label>
+                </ItemTemplate>
+                <EditItemTemplate>
+                    <asp:TextBox ID="supname" runat="server" Text='<%# Bind("supname") %>' CssClass="sup form-control">
+                    </asp:TextBox>
+                </EditItemTemplate>
+            </asp:TemplateField>
+        </Columns>
+<PagerTemplate> 
+         <asp:Label ID="lblPage" runat="server" Text='<%# "第" + (((GridView)Container.NamingContainer).PageIndex + 1)  + "页/共" + (((GridView)Container.NamingContainer).PageCount) + "页" %> '></asp:Label>  
+         <asp:LinkButton ID="lbnFirst" runat="Server" Text="首页"  Enabled='<%# ((GridView)Container.NamingContainer).PageIndex != 0 %>' CommandName="Page" CommandArgument="First" ></asp:LinkButton>  
+        <asp:LinkButton ID="lbnPrev" runat="server" Text="上一页" Enabled='<%# ((GridView)Container.NamingContainer).PageIndex != 0 %>' CommandName="Page" CommandArgument="Prev"  ></asp:LinkButton>  
+        <asp:LinkButton ID="lbnNext" runat="Server" Text="下一页" Enabled='<%# ((GridView)Container.NamingContainer).PageIndex != (((GridView)Container.NamingContainer).PageCount - 1) %>' CommandName="Page" CommandArgument="Next" ></asp:LinkButton>  
+         <asp:LinkButton ID="lbnLast" runat="Server" Text="尾页"   Enabled='<%# ((GridView)Container.NamingContainer).PageIndex != (((GridView)Container.NamingContainer).PageCount - 1) %>' CommandName="Page" CommandArgument="Last" ></asp:LinkButton>  
+         到第<asp:dropdownlist id="PageDropDownList"
+                  autopostback="true" CssClass="drop form-control" Width="40px" 
+                  onselectedindexchanged="PageDropDownList_SelectedIndexChanged" 
+                  runat="server"/> 页 
+     </PagerTemplate>
+        <PagerStyle Height="34px" />
+            <EmptyDataRowStyle HorizontalAlign="Center" Font-Bold="True"></EmptyDataRowStyle>
+    </asp:GridView>
+    </div>
+    </form>
+</body>
+</html>

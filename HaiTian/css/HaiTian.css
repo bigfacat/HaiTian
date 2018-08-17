@@ -1,0 +1,154 @@
+﻿        body {
+            /*line-height:1;
+            font-size: 8pt;*/
+            /*margin:0;*/
+            padding: 0 0 0 5px;
+			font-size: 62.5%;
+        }
+
+        .table > tbody > tr > td {
+            padding: 1px;
+            vertical-align: middle;
+        }
+
+        .table > tbody > tr > th {
+            background-color: #E2E3E5;
+            padding: 1px;
+            vertical-align: middle;
+        }
+
+            .table > tbody > tr > th td {
+                background-color: #E2E3E5;
+            }
+
+        .form-control {
+            display: inline;
+            height: 25px;
+            padding: 2px;
+            /*font-size: 8pt;*/
+            line-height:25px;
+            color: #555;
+            /*background-color: #fff;*/
+            /*background-image: none;*/
+            border: 1px solid #ccc;
+            border-radius: 2px;
+        }
+
+        .btn {
+    padding: 4px 8px;
+    font-size: 10pt;
+    line-height: 1.5;
+    border-radius: 4px;
+}
+
+.long-input{
+    width:250px;
+}
+
+h1{
+text-align: center;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    font-size: 3em;
+
+}
+
+.header{
+    margin-bottom: 20px;
+    border-collapse: collapse;
+
+}
+
+        #header {
+            /*width:100%;*/
+        }
+
+            .header td {
+                /*border:solid 1px;*/
+                text-align: center;
+                padding: 2px;
+            }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        #fixed_table {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            table-layout: fixed;
+        }
+
+        .scroll_table_content {
+            width: 100%;
+            /*overflow:initial;*/
+            overflow:scroll;
+        }
+
+        .modal-body table tr td {
+            padding: 5px;
+        }
+
+        .modal-dialog {
+            width: 700px;
+            margin: 100px auto;
+        }
+
+a {
+    color: #777;
+    text-decoration: none;
+}
+
+ .a-upload {
+    padding: 4px 10px;
+    line-height: 20px;
+    position: relative;
+    cursor: pointer;
+    color: #888;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    display: inline-block;
+    *display: inline;
+    *zoom: 1
+}
+
+.a-upload  input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    cursor: pointer
+}
+
+.a-upload:hover {
+    color: #444;
+    background: #eee;
+    border-color: #ccc;
+    text-decoration: none
+}
+
+.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front{
+    z-index: 200;
+}
+
+        .inline {
+            display:inline-block;
+            vertical-align:top;
+        }
+
+table td input[type=checkbox]{
+    vertical-align: middle;
+}
+
+        textarea {
+            display: inline;
+            padding: 2px;
+            color: #555;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+        }

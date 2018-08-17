@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title></title>
+<link rel="stylesheet" href="jquery/jquery-ui-1.12.1.custom/jquery-ui.css">
+<script src="jquery/jquery-1.11.3/jquery.js"></script>
+<script src="jquery/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+<script src="Guriddo_jqGrid_JS_5.2.1/src/i18n/grid.locale-cn.js"></script>
+<script src="Guriddo_jqGrid_JS_5.2.1/js/jquery.jqGrid.min.js"></script>
+<link rel="stylesheet" href="Guriddo_jqGrid_JS_5.2.1/css/ui.jqgrid.css" />
+<script type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+<link rel="stylesheet" href="css/HaiTian.css" />
+<script type="text/javascript" src="js/jquery.cookie.js"></script>
+    <script src="js/public.js"></script>
+<script src="js/SalesOrderCost.js"></script>
+
+<!--<script src="bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="bootstrap/3.3.4/css/bootstrap.min.css" />冲突-->
+</head>
+<body>
+<form id="form1">
+        <div id="Menu"></div>
+        <h1>薪资计算</h1>
+        <div>
+                <div class="header">
+                        <table id="header">
+                                <tr>
+                                        <td ><label for="year">选择年份</label></td>
+                                        <td ><select name="year" id="year" class="form-control">
+                                                        <option>2017</option>
+                                                        <option>2018</option>
+                                                        <option>2019</option>
+                                                        <option>2020</option>
+                                                        <option>2021</option>
+                                                        <option>2022</option>
+                                                        <option>2023</option>
+                                                        <option>2024</option>
+                                                        <option>2025</option>
+                                                </select></td>
+                                        <td ><label for="month">选择月份</label></td>
+                                        <td ><select name="month" id="month" class="form-control">
+                                                        <option>1</option>
+                                                        <option>2</option>
+                                                        <option>3</option>
+                                                        <option>4</option>
+                                                        <option>5</option>
+                                                        <option>6</option>
+                                                        <option>7</option>
+                                                        <option>8</option>
+                                                        <option>9</option>
+                                                        <option>10</option>
+                                                        <option>11</option>
+                                                        <option>12</option>
+                                                </select></td>
+                                        <td><input ID="query" type="button" value="计算" class="btn btn-default" /></td>
+                                </tr>
+                        </table>
+                </div>
+                <hr>
+                <table id="jqGrid">
+                </table>
+                <div id="jqGridPager"></div>
+        </div>
+</form>
+<div style="display: none" id="section-modal" title="工段">
+        <div>
+                <label>工段</label>
+                <input id="input-section" class="form-control">
+                <input type="button" value="查询" id="query-section">
+        </div>
+        <hr>
+        <table id="sectionGrid">
+        </table>
+        <div id="sectionGridPager"></div>
+</div>
+<div style="display: none;" id="dialog-modal" title="工段维护">
+               <table>
+                <tbody>
+                        <tr>
+                                <td><label>年份</label></td>
+                                <td><select id="modal-year" class="form-control">
+                                <option>2017</option>
+                                                        <option>2018</option>
+                                                        <option>2019</option>
+                                                        <option>2020</option>
+                                                        <option>2021</option>
+                                                        <option>2022</option>
+                                                        <option>2023</option>
+                                                        <option>2024</option>
+                                                        <option>2025</option>
+                                                </select></td>
+                                <td><label>月份</label></td>
+                                <td><select id="modal-month" class="form-control">
+                                <option>1</option>
+                                                        <option>2</option>
+                                                        <option>3</option>
+                                                        <option>4</option>
+                                                        <option>5</option>
+                                                        <option>6</option>
+                                                        <option>7</option>
+                                                        <option>8</option>
+                                                        <option>9</option>
+                                                        <option>10</option>
+                                                        <option>11</option>
+                                                        <option>12</option>
+                                    </select></td>
+                                <td><label>工段</label></td>
+                                <td><input type="text" id="modal-section" class="form-control" readonly=true></td>
+                        </tr>
+
+                </tbody>
+        </table>
+<hr>
+        <div class="btn-group">
+                <input ID="modal-add" type="button" value="新增" class="btn btn-default" />
+                <input ID="modal-edit" type="button" value="编辑" class="btn btn-default" />
+                <input ID="modal-delete" type="button" value="删除" class="btn btn-default" />
+        </div>
+        <table id="dialogGrid">
+        </table>
+        <div id="dialogGridPager"></div>
+</div>
+
+<div style="display: none;" id="entry-modal" title="编辑">
+        <table>
+                <tbody>
+                        <tr>
+                                <td><label>职员</label></td>
+                                <td><input type="text" id="entry-emp" class="form-control" readonly=true></td>
+                        </tr>
+                        <tr>
+                                <td><label>职员姓名</label></td>
+                                <td><input type="text" id="entry-empname" class="form-control" readonly=true></td>
+                        </tr>
+                        <tr>
+                                <td><label>比例</label></td>
+                                <td><input type="text" id="entry-rate" class="form-control"></td>
+                        </tr>
+                </tbody>
+        </table>
+</div>
+<div style="display: none" id="emp-modal" title="职员">
+        <div>
+                <label>职员代码</label>
+                <input id="inputemp" class="form-control">
+                <input type="button" value="查询" id="query-emp">
+        </div>
+        <hr>
+        <table id="empGrid">
+        </table>
+        <div id="empGridPager"></div>
+</div>
+
+<div style="display:none;" id="alert" title="提示"> <b>
+        <p id="msg"></p>
+        </b> </div>
+        <div style="display:none;" id="alert-tip" title="提示"> <b>
+        <p id="msg-tip"></p>
+        </b> </div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+﻿using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+public class GridViewTemplate : ITemplate
+
+{
+    public delegate void EventHandler(object sender, EventArgs e);
+    public event EventHandler eh;
+
+    private DataControlRowType templateType;
+
+    public string columnName;
+    private string controlID;
+
+
+
+    public GridViewTemplate(DataControlRowType type, string colname)
+
+    {
+
+        templateType = type;
+
+        columnName = colname;
+
+    }
+    public GridViewTemplate(DataControlRowType type, string controlID, string colname)
+    {
+        templateType = type;
+        this.controlID = controlID;
+        columnName = colname;
+    }
+
+
+    public void InstantiateIn(System.Web.UI.Control container)
+    {
+        switch (templateType)
+        {
+            case DataControlRowType.Header:
+                Literal lc = new Literal();
+                lc.Text = columnName;
+                container.Controls.Add(lc);
+                break;
+            case DataControlRowType.DataRow:
+                TextBox tb = new TextBox();
+                tb.Style.Add("width","80px");
+                tb.CssClass = "form-control";
+                tb.ID = this.controlID;
+                if (eh != null)
+                {
+                    //lbtn.Click += new System.EventHandler(eh);
+                }
+                tb.DataBinding += new System.EventHandler(lbtn_DataBinding);
+
+                container.Controls.Add(tb);
+
+                break;
+            default:
+                break;
+        }
+    }
+    void lbtn_DataBinding(object sender, EventArgs e)
+    {
+        TextBox lbtn = sender as TextBox;
+        if (lbtn != null)
+        {
+            GridViewRow container = lbtn.NamingContainer as GridViewRow;
+            if (container != null)
+            {
+                object dataValue = DataBinder.Eval(container.DataItem, columnName);
+                if (dataValue != DBNull.Value)
+                {
+                    lbtn.Text = dataValue.ToString();
+                }
+            }
+        }
+    }
+
+    private void lblContent_DataBinding(object sender, EventArgs e)
+    {
+        Label lbl = (Label)sender;
+        GridViewRow container = (GridViewRow)lbl.NamingContainer;
+        lbl.Text = ((DataRowView)container.DataItem)[columnName].ToString();
+        lbl.ToolTip = lbl.Text;
+    }
+
+}

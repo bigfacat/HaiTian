@@ -1,0 +1,43 @@
+﻿<%@ WebHandler Language="C#" Class="LoadUserData" %>
+
+using System;
+using System.Web;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Text;
+using System.Data;
+using SQL;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using HaiTian;
+
+public class LoadUserData : IHttpHandler
+{
+
+    public void ProcessRequest(HttpContext context)
+    {
+        string username = context.Request.QueryString["username"];
+
+        string Msg = "";
+        string str = "select mu.id,username,CreateDate,FDescription from t_MyUserAccount mu join t_User u on mu.username=u.FName where 1=1";
+
+        if (username != null && username != "" && username != "undefined")
+        {
+            str += " and username like '%" + username + "%'";
+        }
+
+        DataTable dtResult = SQLServer.GetDataTable(str, ref Msg);
+
+        string jsondata = ClassHaiTian.GetJQGridJSONData(dtResult);
+        context.Response.Write(jsondata);
+
+    }
+
+    public bool IsReusable
+    {
+        get
+        {
+            return false;
+        }
+    }
+}

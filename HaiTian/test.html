@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <script src="jquery/jquery-1.11.3/jquery.js"></script>
+    <link rel="stylesheet" href="jquery/jquery-ui-1.12.1.custom/jquery-ui.css">
+    <script src="jquery/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+    <script src="Guriddo_jqGrid_JS_5.2.1/src/i18n/grid.locale-cn.js"></script>
+    <script src="Guriddo_jqGrid_JS_5.2.1/js/jquery.jqGrid.min.js"></script>
+    <link rel="stylesheet" href="Guriddo_jqGrid_JS_5.2.1/css/ui.jqgrid.css" />
+    <meta charset="utf-8" />
+    <title>jqGrid Loading Data - Inline Editing with on Row Click</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0 0 0 5px;
+            font-size: 62.5%;
+        }
+        .ui-jqgrid tr.jqgrow td {
+            height:20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <table id="jqGrid"></table>
+    <div id="jqGridPager"></div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#jqGrid").jqGrid({
+                url: 'Test.json',
+                editurl: 'ChanPinXiLie.ashx',
+                datatype: "json",
+                colModel: [
+                    {
+                        name: 'Integer',
+                        editable: true,
+                        width: 75
+                    },
+                    {
+                        name: 'Number',
+                        width: 100,
+                        editable: true
+                    },
+                    {
+                        name: 'Email',
+                        width: 100,
+                        editable: true
+                    },
+                    {
+                        name: 'Url',
+                        width: 80,
+                        editable: true
+                    }
+                ],
+				loadonce : true,
+                width: 780,
+                height: 230,
+                rowNum: 10,
+                onSelectRow: editRow,
+                pager: "#jqGridPager"
+            });
+
+            var lastSelection;
+
+            function editRow(id) {
+                if (id && id !== lastSelection) {
+                    var grid = $("#jqGrid");
+                    grid.restoreRow(lastSelection);
+
+                    var editParameters = {
+                        keys: true,
+                        successfunc: editSuccessful,
+                      errorfunc:  editFailed,
+						restoreAfterError : true
+                    };
+                    grid.jqGrid('editRow',id, editParameters);
+                    lastSelection = id;
+                }
+            }
+
+            function editSuccessful( data, stat) {
+                var response = data.responseText;
+				if (response.hasOwnProperty("error")) {
+					if(response.error.length) {
+						return [false,response.error ];
+					}
+				}
+				return [true,"",""];
+            }
+
+            function editFailed(rowID, response) {
+				$.jgrid.info_dialog($.jgrid.errors.errcap,'<div class="ui-state-error">RowID:'+rowID+ ' :  '+ response.responseJSON.error +'</div>', $.jgrid.edit.bClose,{buttonalign:'right'})
+                //alert(response.responseJSON.error);
+            }
+
+        });
+
+    </script>
+
+
+</body>
+</html>

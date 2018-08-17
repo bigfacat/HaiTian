@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title></title>
+<meta charset="utf-8" />
+</head>
+<body>
+<div id="public">
+        <div style="display:none;" id="alert" title="提示"> <b>
+                <p id="msg"></p>
+                </b> </div>
+        <div style="display:none;" id="alert-tip" title="提示"> <b>
+                <p id="msg-tip"></p>
+                </b> </div>
+        <div style="display:none;" id="con" title="确认"> <b>
+                <p id="con-msg" style="height: 20px;margin-top: 12px;margin-bottom: 12px;"></p>
+                </b>
+                <hr >
+                <input type="button" id=confirm value="确认" style="float: right;height: 30px;">
+        </div>
+               
+                <div style="display:none;" id="confirm-div" title="确认"> <b>
+                <p id="confirm-msg"></p>
+                </b>
+        </div>
+
+        <div style="display: none" id=progress-modal>
+                <div id=progressbar></div>
+        </div>
+        <div style="display: none" id="emp-modal" title="职员">
+                <div>
+                        <label>职员</label>
+                        <input id="query-input-emp" class="form-control">
+                        <input type="button" value="查询" id="query-emp">
+                </div>
+                <hr>
+                <table id="empGrid">
+                </table>
+                <div id="empGridPager"></div>
+        </div>
+</div>
+</body>
+</html>

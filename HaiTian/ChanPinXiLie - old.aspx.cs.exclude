@@ -1,0 +1,847 @@
+﻿using ConsoleApplication1;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using ConsoleApplication1;
+using System.Web.Services;
+using Newtonsoft.Json;
+using System.Collections;
+using System.IO;
+using HaiTian;
+
+public partial class ChanPinXiLie : System.Web.UI.Page
+{
+    DataTable dt = null;
+    public static string workshop = "";
+    public static string workline = "";
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            //ViewState["GridView1"] = dt;
+
+        }
+
+        if (IsPostBack)
+        {
+            dt = (DataTable)ViewState["GridView1"];
+        }
+
+    }
+
+    public void InitGridView()
+    {
+        this.GridView1.DataSource = dt;
+        this.GridView1.DataBind();
+    }
+
+    protected void GridView1_RowCreated(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.Header)
+        {
+            //获取表头所在行的所有单元格
+            TableCellCollection tcHeader = e.Row.Cells;
+            //清除自动生成的表头
+            //tcHeader.Clear();
+
+            //tcHeader[1].ColumnSpan = 2;
+            //tcHeader[2].RowSpan = 2;
+        }
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            //e.Row.FindControl("")
+        }
+
+
+    }
+
+    //绑定数据时触发
+    protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        //如果行的类型是数据绑定行
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            //行的状态是：正常状态 或者 交替行
+            if (e.Row.RowState == DataControlRowState.Normal || e.Row.RowState == DataControlRowState.Alternate)
+            {
+
+            }
+
+            //行的状态是： 编辑状态 或者 （交替行且是编辑状态）
+            if (e.Row.RowState == DataControlRowState.Edit ||
+            e.Row.RowState == (DataControlRowState.Alternate | DataControlRowState.Edit))
+            {
+
+            }
+
+        }
+    }
+    //删除数据
+
+    protected void GridView1_DataBound(Object sender, EventArgs e)
+    {
+
+        GridView1.BottomPagerRow.Visible = true;//只有一页数据的时候也在下面显示pagerrow，需要top的再加Top
+
+        // Retrieve the pager row.        
+
+        GridViewRow pagerRow = GridView1.BottomPagerRow;
+
+        // Retrieve the DropDownList and Label controls from the row.        
+
+        DropDownList pageList = (DropDownList)pagerRow.Cells[0].FindControl("PageDropDownList");
+
+        Label pageLabel = (Label)pagerRow.Cells[0].FindControl("CurrentPageLabel");
+
+        if (pageList != null)
+
+        {
+
+            // Create the values for the DropDownList control based on           
+
+            // the  total number of pages required to display the data            
+
+            // source.            
+
+            for (int i = 0; i < GridView1.PageCount; i++)
+
+            {
+
+                // Create a ListItem object to represent a page.                
+
+                int pageNumber = i + 1;
+
+                ListItem item = new ListItem(pageNumber.ToString());
+
+                // If the ListItem object matches the currently selected                
+
+                // page, flag the ListItem object as being selected. Because               
+
+                // the DropDownList control is recreated each time the pager               
+
+                // row gets created, this will persist the selected item in                
+
+                // the DropDownList control.                  
+
+                if (i == GridView1.PageIndex)
+
+                {
+
+                    item.Selected = true;
+
+                }
+
+                // Add the ListItem object to the Items collection of the               
+
+                // DropDownList.                
+
+                pageList.Items.Add(item);
+
+            }
+
+        }
+
+        if (pageLabel != null)
+
+        {
+
+            // Calculate the current page number.            
+
+            int currentPage = GridView1.PageIndex + 1;
+
+            // Update the Label control with the current page information.           
+
+            pageLabel.Text = "Page " + currentPage.ToString() +
+
+             " of " + GridView1.PageCount.ToString();
+
+        }
+
+    }
+    protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        if (e.CommandName == "del")
+        {
+            string err = "";
+            GetDataTableFromGridView(GridView1, dt, ref err);
+
+            dt.Rows.Add(dt.NewRow());
+            GridView1.DataSource = dt;
+            GridView1.DataBind();
+
+            GridView1.DeleteRow(0);
+            GridView1.DataBind();
+
+            //int productID = Convert.ToInt32(e.CommandArgument);
+            //db.Del(productID);
+        }
+    }
+    //分页
+    protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        if (e.NewPageIndex < 0)
+        {
+            e.NewPageIndex = 0;
+        }
+        this.GridView1.PageIndex = e.NewPageIndex;
+        GridView1.EditIndex = -1;
+        InitGridView();   //数据绑定 
+
+    }
+
+    protected void PageDropDownList_SelectedIndexChanged(Object sender, EventArgs e)
+    {
+
+        // Retrieve the pager row.        
+
+        GridViewRow pagerRow = GridView1.BottomPagerRow;
+
+        // Retrieve the PageDropDownList DropDownList from the bottom pager row.        
+
+        DropDownList pageList = (DropDownList)pagerRow.Cells[0].FindControl("PageDropDownList");
+
+        // Set the PageIndex property to display that page selected by the user.       
+
+        GridView1.PageIndex = pageList.SelectedIndex;
+
+        //query_Click(null, null);
+        GridView1.EditIndex = -1;
+        InitGridView();   //数据绑定
+
+    }
+    //切换到编辑模式
+    protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
+    {
+        this.GridView1.EditIndex = e.NewEditIndex;
+
+        GridView tb = (sender as GridView);
+        GridView1.DataSource = dt;
+        GridView1.DataBind();
+        //InitGridView();
+    }
+
+    protected void GridView1_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        string err = "";
+
+        GetDataTableFromGridView(GridView1, dt, ref err);
+
+        List<int> index = null;
+        for (int i = 0; i < GridView1.Rows.Count; i++)
+        {
+            CheckBox cb = (CheckBox)GridView1.Rows[i].FindControl("cb");
+            if (cb.Checked == true)
+            {
+                index.Add(((GridViewRow)(cb.Parent.Parent)).RowIndex);
+
+            }
+        }
+
+        dt.Rows.RemoveAt(e.RowIndex);
+        GridView1.DataSource = dt;
+
+        GridView1.DataBind();
+
+    }
+
+    //取消
+    protected void GridView1_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
+    {
+        GridView GV = (GridView)(sender);
+
+        TextBox tbprd = (TextBox)(GV.Rows[e.RowIndex].FindControl("tbprd"));
+        string lbid = ((Label)(GridView1.Rows[e.RowIndex].FindControl("lbid"))).Text.Trim();
+        if (lbid == "")
+        {
+            dt.Rows.RemoveAt(e.RowIndex);
+
+        }
+
+        this.GridView1.EditIndex = -1;
+        GridView1.DataSource = dt;
+        GridView1.DataBind();
+        //InitGridView();
+    }
+    protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
+    {
+        //获取当前页索引
+        int i = this.GridView1.EditIndex;
+
+        string lbid = ((Label)(this.GridView1.Rows[i].FindControl("lbid"))).Text.ToString().Trim();
+
+        string xiliename = ((TextBox)(this.GridView1.Rows[i].FindControl("tbxl"))).Text.ToString().Trim();
+        if (xiliename == "")
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alertScript", "<script>alert(\"" + "产品系列不能为空!" + "\")</script>", false);
+            return;
+        }
+        string matname = ((TextBox)(this.GridView1.Rows[i].FindControl("matname"))).Text.ToString().Trim();
+        if (matname == "")
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alertScript", "<script>alert(\"" + "物料不能为空!" + "\")</script>", false);
+            return;
+        }
+        string supname = ((TextBox)(this.GridView1.Rows[i].FindControl("supname"))).Text.ToString().Trim();
+        if (supname == "")
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alertScript", "<script>alert(\"" + "供应商不能为空!" + "\")</script>", false);
+            return;
+        }
+
+        string[] arrxl = xiliename.Split('|');
+        string[] arrmat = matname.Split('|');
+        string[] arrsup = supname.Split('|');
+
+        bool bl = false;
+        if (lbid != "")
+        {
+            bl = CPXL.UpdateCPXLData(lbid, arrxl[1], arrmat[0], arrsup[0]);
+        }
+        else
+        {
+            bl = CPXL.SaveCPXLData(false,arrxl[1], arrmat[0], arrsup[0]);
+        }
+
+        if (bl == false)
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alertScript", "<script>alert(\"" + "保存失败!" + "\")</script>", false);
+            return;
+        }
+
+        ScriptManager.RegisterStartupScript(this, this.GetType(), "alertScript", "<script>alert(\"" + "保存成功!" + "\")</script>", false);
+
+        query_Click(null, null);
+
+        //DataKey key = this.GridView1.DataKeys[e.RowIndex];
+        //int id = Convert.ToInt32(key[0].ToString());
+        //首先找到该对象
+        //Products tmp = tmpList.Where(c => c.ProductID == id).First();
+        //tmp.ProductName = productsName;
+        //db.Update(tmp);
+        //InitGridView();
+    }
+
+    public DataTable GetDataTableFromGridView(GridView gv, DataTable DT, ref string Error)
+    {
+        DT.Rows.Clear();
+
+        for (int j = 0; j < gv.Rows.Count; j++)
+        {
+            DataRow dr = DT.NewRow();
+
+            Label lbid = (Label)gv.Rows[j].FindControl("lbid");
+            if (lbid.Text != "")
+            {
+                dr["lbid"] = lbid.Text.Trim();
+            }
+
+            TextBox tbsalesOrder = (TextBox)gv.Rows[j].FindControl("tbsalesOrder");
+            dr["SEOrder"] = tbsalesOrder.Text.Trim();
+
+            DropDownList ddlFSEQ = (DropDownList)gv.Rows[j].FindControl("ddlFSEQ");
+            if (ddlFSEQ.Text != "")
+            {
+                dr["FSEQ"] = ddlFSEQ.Text.Trim();
+            }
+
+            Label lblFQty = (Label)gv.Rows[j].FindControl("lblFQty");
+            if (lblFQty.Text != "")
+            {
+                dr["FQty"] = lblFQty.Text.Trim();
+            }
+
+            TextBox tbMO = (TextBox)gv.Rows[j].FindControl("tbMO");
+            if (tbMO.Text != "")
+            {
+                dr["TaskOrder"] = tbMO.Text.Trim();
+            }
+
+            Label lblFNumber = (Label)gv.Rows[j].FindControl("lblFNumber");
+            if (lblFNumber.Text != "")
+            {
+                dr["FNumber"] = lblFNumber.Text.Trim();
+            }
+
+            Label lblMName = (Label)gv.Rows[j].FindControl("lblMName");
+            if (lblMName.Text != "")
+            {
+                dr["MaterialName"] = lblMName.Text.Trim();
+            }
+
+            TextBox TaskOrderNum = (TextBox)gv.Rows[j].FindControl("lblNum");
+
+            if (TaskOrderNum.Text.Trim() != "")
+            {
+                if (IsNumeric(TaskOrderNum.Text.Trim()) || IsInt(TaskOrderNum.Text.Trim()))
+                {
+                    dr["TaskOrderNum"] = TaskOrderNum.Text.Trim();
+                }
+                else
+                {
+                    Error = TaskOrderNum.Text.Trim() + "不是数字,请重新输入!";
+                }
+            }
+
+            TextBox tbplandate = (TextBox)gv.Rows[j].FindControl("tbplandate");
+            if (tbplandate.Text != "")
+            {
+                dr["LineDate"] = tbplandate.Text.Trim();
+            }
+
+            Label lbloutdate = (Label)gv.Rows[j].FindControl("lbloutdate");
+            if (lbloutdate.Text != "")
+            {
+                dr["FPLANDELIVERYDATE"] = lbloutdate.Text.Trim();
+            }
+
+            TextBox tbsunday = (TextBox)gv.Rows[j].FindControl("tbsunday");
+            if (tbsunday.Text.Trim() != "")
+            {
+                if (IsNumeric(tbsunday.Text.Trim()) || IsInt(tbsunday.Text.Trim()))
+                {
+                    dr["SunNum"] = tbsunday.Text.Trim();
+                }
+                else
+                {
+                    Error = tbsunday.Text.Trim() + "不是数字,请重新输入!";
+                }
+            }
+
+            TextBox tbmonday = (TextBox)gv.Rows[j].FindControl("tbmonday");
+            if (tbmonday.Text.Trim() != "")
+            {
+                if (IsNumeric(tbmonday.Text.Trim()) || IsInt(tbmonday.Text.Trim()))
+                {
+                    dr["MonNum"] = tbmonday.Text.Trim();
+                }
+                else
+                {
+                    Error = tbmonday.Text.Trim() + "不是数字,请重新输入!";
+                }
+            }
+
+            TextBox tbtuesday = (TextBox)gv.Rows[j].FindControl("tbtuesday");
+            if (tbtuesday.Text.Trim() != "")
+            {
+                if (IsNumeric(tbtuesday.Text.Trim()) || IsInt(tbtuesday.Text.Trim()))
+                {
+                    dr["TuesNum"] = tbtuesday.Text.Trim();
+                }
+                else
+                {
+                    Error = tbtuesday.Text.Trim() + "不是数字,请重新输入!";
+                }
+            }
+
+            TextBox tbwednesday = (TextBox)gv.Rows[j].FindControl("tbwednesday");
+            if (tbwednesday.Text.Trim() != "")
+            {
+                if (IsNumeric(tbwednesday.Text.Trim()) || IsInt(tbwednesday.Text.Trim()))
+                {
+                    dr["WedNum"] = tbwednesday.Text.Trim();
+                }
+                else
+                {
+                    Error = tbwednesday.Text.Trim() + "不是数字,请重新输入!";
+                }
+            }
+
+            TextBox tbThursday = (TextBox)gv.Rows[j].FindControl("tbThursday");
+            if (tbThursday.Text.Trim() != "")
+            {
+                if (IsNumeric(tbThursday.Text.Trim()) || IsInt(tbThursday.Text.Trim()))
+                {
+                    dr["ThurNum"] = tbThursday.Text.Trim();
+                }
+                else
+                {
+                    Error = tbThursday.Text.Trim() + "不是数字,请重新输入!";
+                }
+            }
+
+            TextBox tbFriday = (TextBox)gv.Rows[j].FindControl("tbFriday");
+            if (tbFriday.Text.Trim() != "")
+            {
+                if (IsNumeric(tbFriday.Text.Trim()) || IsInt(tbFriday.Text.Trim()))
+                {
+                    dr["FriNum"] = tbFriday.Text.Trim();
+                }
+                else
+                {
+                    Error = tbFriday.Text.Trim() + "不是数字,请重新输入!";
+                }
+            }
+
+            TextBox tbSaturday = (TextBox)gv.Rows[j].FindControl("tbSaturday");
+            if (tbSaturday.Text.Trim() != "")
+            {
+                if (IsNumeric(tbSaturday.Text.Trim()) || IsInt(tbSaturday.Text.Trim()))
+                {
+                    dr["SatNum"] = tbSaturday.Text.Trim();
+                }
+                else
+                {
+                    Error = tbSaturday.Text.Trim() + "不是数字,请重新输入!";
+                }
+            }
+
+            DateTime first = DateTime.MinValue;
+            DateTime last = DateTime.MaxValue;
+            //bool b = GetDaysOfWeeks(Convert.ToInt32(select_year.SelectedValue), Convert.ToInt32(select_week.SelectedValue), out first, out last);
+
+            Label lblSunday = (Label)gv.HeaderRow.FindControl("lblSunday");
+            if (lblSunday.Text != "")
+            {
+                dr["SunDate"] = last.AddDays(-6);
+            }
+
+            Label lblMonday = (Label)gv.HeaderRow.FindControl("lblMonday");
+            if (lblMonday.Text != "")
+            {
+                dr["MonDate"] = last.AddDays(-5);
+            }
+
+            Label lblTuesday = (Label)gv.HeaderRow.FindControl("lblTuesday");
+            if (lblTuesday.Text != "")
+            {
+                dr["TuesDate"] = last.AddDays(-4);
+            }
+
+            Label lblWednesday = (Label)gv.HeaderRow.FindControl("lblWednesday");
+            if (lblWednesday.Text != "")
+            {
+                dr["WedDate"] = last.AddDays(-3);
+            }
+
+            Label lblThursday = (Label)gv.HeaderRow.FindControl("lblThursday");
+            if (lblThursday.Text != "")
+            {
+                dr["ThurDate"] = last.AddDays(-2);
+            }
+
+            Label lblFriday = (Label)gv.HeaderRow.FindControl("lblFriday");
+            if (lblFriday.Text != "")
+            {
+                dr["FriDate"] = last.AddDays(-1);
+            }
+
+            Label lblSaturday = (Label)gv.HeaderRow.FindControl("lblSaturday");
+            if (lblSunday.Text != "")
+            {
+                dr["SatDate"] = last;
+            }
+
+            DT.Rows.Add(dr);
+
+        }
+        return DT;
+    }
+
+    public static bool IsNumeric(string value)
+    {
+        return Regex.IsMatch(value, @"^[+-]?\d+[.]\d*$");
+        //return Regex.IsMatch(value, @"\d");
+    }
+    public static bool IsInt(string value)
+    {
+        return Regex.IsMatch(value, @"^[+-]?\d+$");
+    }
+
+    /// <summary>
+    /// 获取指定周数的开始日期和结束日期，开始日期为周日
+    /// </summary>
+    /// <param name="year">年份</param>
+    /// <param name="index">周数</param>
+    /// <param name="first">当此方法返回时，则包含参数 year 和 index 指定的周的开始日期的 System.DateTime 值；如果失败，则为 System.DateTime.MinValue。</param>
+    /// <param name="last">当此方法返回时，则包含参数 year 和 index 指定的周的结束日期的 System.DateTime 值；如果失败，则为 System.DateTime.MinValue。</param>
+    /// <returns></returns>
+    public static bool GetDaysOfWeeks(int year, int index, out DateTime first, out DateTime last)
+    {
+        first = DateTime.MinValue;
+        last = DateTime.MaxValue;
+        if (year < 1700 || year > 9999)
+        {
+            //"年份超限"
+            return false;
+        }
+        if (index < 1 || index > 53)
+        {
+            //"周数错误"
+            return false;
+        }
+        DateTime startDay = new DateTime(year, 1, 1);  //该年第一天
+        DateTime endDay = new DateTime(year + 1, 1, 1).AddMilliseconds(-1);
+        int dayOfWeek = 0;
+        if (Convert.ToInt32(startDay.DayOfWeek.ToString("d")) > 0)
+            dayOfWeek = Convert.ToInt32(startDay.DayOfWeek.ToString("d"));  //该年第一天为星期几
+        if (dayOfWeek == 7) { dayOfWeek = 0; }
+        if (index == 1)
+        {
+            first = startDay;
+            if (dayOfWeek == 6)
+            {
+                last = first;
+            }
+            else
+            {
+                last = startDay.AddDays((6 - dayOfWeek));
+            }
+        }
+        else
+        {
+            first = startDay.AddDays((7 - dayOfWeek) + (index - 2) * 7); //index周的起始日期
+            last = first.AddDays(6);
+            //if (last > endDay)
+            //{
+            //    last = endDay;
+            //}
+        }
+        if (first > endDay)  //startDayOfWeeks不在该年范围内
+        {
+            //"输入周数大于本年最大周数";
+            return false;
+        }
+        return true;
+    }
+
+    protected void Add_Click(object sender, EventArgs e)
+    {
+        DataRow dr = dt.NewRow();
+        dt.Rows.InsertAt(dr, 0);
+        GridView1.EditIndex = 0;
+        GridView1.PageIndex = 0;
+        GridView1.DataSource = dt;
+        GridView1.DataBind();
+    }
+
+    [WebMethod]
+    public static string GetProduction(string no)
+    {
+        string strSql = @"select c.FNAME,a.FMATERIALID,a.FNUMBER,a.FNUMBER+'|'+c.FNAME as production from T_BD_MATERIAL a
+join T_BD_MATERIALBASE b on a.FMATERIALID = b.FMATERIALID
+join T_BD_MATERIAL_L c on b.FMATERIALID = c.FMATERIALID
+join T_BD_MATERIALCATEGORY cg on b.FCATEGORYID=cg.FCATEGORYID
+join T_BD_MATERIALCATEGORY_L cgl on cg.FCATEGORYID=cgl.FCATEGORYID
+where cg.FCATEGORYID=239 or cg.FCATEGORYID = 241";
+        DataTable dtResult = Program.GetDataTableBySqlText(strSql);
+        string Jsonstring = string.Empty;
+        Jsonstring = JsonConvert.SerializeObject(dtResult);
+        return Jsonstring;
+    }
+
+
+
+    protected void tbprd_TextChanged(object sender, EventArgs e)
+    {
+        TextBox tbprd = (TextBox)(sender);
+        string[] arr = tbprd.Text.Split('|');
+        DataTable detail = Class1.GetPrdDetails(arr[0]);
+        if (detail.Rows.Count == 0)
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alertScript", "<script>alert(\"" + "产品不存在!" + "\")</script>", false);
+            return;
+        }
+
+        Label lbunit = (Label)tbprd.FindControl("lbunit");
+        lbunit.Text = detail.Rows[0]["unitname"].ToString();
+
+        Label lbcapacity = (Label)tbprd.FindControl("lbcapacity");
+        lbcapacity.Text = detail.Rows[0]["StandCapacity"].ToString();
+    }
+
+    protected void Delete_Click(object sender, EventArgs e)
+    {
+        List<int> index = new List<int>();
+        for (int i = 0; i < GridView1.Rows.Count; i++)
+        {
+            CheckBox cb = (CheckBox)GridView1.Rows[i].FindControl("cb");
+            if (cb.Checked == true)
+            {
+                Label lbid = (Label)cb.FindControl("lbid");
+                if (lbid.Text.Trim() != "")
+                    index.Add(Convert.ToInt32(lbid.Text.Trim()));
+
+            }
+        }
+
+        if (index.Count == 0)
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alertScript", "<script>alert(\"" + "请选择最少一条数据!" + "\")</script>", false);
+            return;
+
+        }
+
+        bool bl = false;
+        bl = CPXL.DeleteCPXLData(index);
+        if (bl == false)
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alertScript", "<script>alert(\"" + "删除失败!" + "\")</script>", false);
+            return;
+        }
+        if (bl == true)
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alertScript", "<script>alert(\"" + "删除成功!" + "\")</script>", false);
+            query_Click(null, null);
+        }
+
+    }
+
+    protected void query_Click(object sender, EventArgs e)
+    {
+        DataTable dt = CPXL.LoadCPXLData(cpxl.Text,sup.Text);
+        ViewState["GridView1"] = dt;
+
+        if (dt != null)
+        {
+            GridView1.EditIndex = -1;
+            GridView1.DataSource = dt;
+            GridView1.DataBind();
+        }
+
+    }
+
+
+    protected void gvselect_work_TextChanged(object sender, EventArgs e)
+    {
+        DropDownList gvselect_work = (DropDownList)(sender);
+        DropDownList gvselect_line = (DropDownList)gvselect_work.FindControl("gvselect_line");
+        gvselect_line.Items.Clear();
+        DataTable dt_line = ConsoleApplication1.Class1.GetWorkLinesList(gvselect_work.SelectedValue);
+        for (int i = 0; i < dt_line.Rows.Count; i++)
+        {
+            gvselect_line.Items.Add(new ListItem(dt_line.Rows[i]["strline"].ToString(), dt_line.Rows[i]["FMASTERID"].ToString()));
+        }
+
+    }
+
+    protected void importC_Click(object sender, EventArgs e)
+    {
+        HttpPostedFile postfile = Context.Request.Files[0];
+        string filename = Path.GetFileName(postfile.FileName);
+        string filepath = Server.MapPath("~/") + "UploadFile\\" + filename;
+        postfile.SaveAs(filepath);
+
+        DataTable exceltable = Class1.ExcelToTableForXLSX(filepath);
+
+        int total = exceltable.Rows.Count ;
+        int suc = 0;
+        for (int i = 0; i < exceltable.Rows.Count; i++)
+        {
+            bool bol;
+
+            string str1 = exceltable.Rows[i]["产品系列"].ToString().Trim();
+            string str2 = exceltable.Rows[i]["物料"].ToString().Trim();
+            string str3 = exceltable.Rows[i]["供应商"].ToString().Trim();
+
+            bool repeating = CPXL.RepeatingData(str1, str2, str3);
+            if (repeating == true)
+            {
+                bol = CPXL.SaveCPXLData(true, str1, str2, str3);
+            }
+            else
+            {
+                bol = CPXL.SaveCPXLData(false, str1, str2, str3);
+            }
+            if (bol == true)
+            {
+                suc++;
+            }
+        }
+        if (suc > 0)
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alertScript", "<script>alert(\"" + "资料已导入！成功" + suc + "条，共" + total + "条\");</script>", false);
+        }
+        else
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alertScript", "<script>alert(\"" + "导入失败！\");</script>", false);
+        }
+
+    }
+
+    [WebMethod]
+    public static string GetXiLieName(string no)
+    {
+        string strSql = @"select FNumber+'|'+FName as xiliename from t_xiliefenlei fl join t_item it on fl.Series=it.FItemID";
+        DataTable dtResult = Program.GetDataTableBySqlText(strSql);
+        string Jsonstring = string.Empty;
+        Jsonstring = JsonConvert.SerializeObject(dtResult);
+        return Jsonstring;
+    }
+
+    [WebMethod]
+    public static string GetMaterialByCPXL(string cpxl)
+    {
+        string[] arr = cpxl.Split('|');
+        if (arr[0].Length== 0)
+        {
+            return "{}";
+        }
+        if (arr[0].ToString() == "")
+        {
+            return "{}";
+        }
+        string strSql = @"select icic.FNumber+'|'+icic.FName as matname from (select *from t_item where FDeleted=0) it 
+join t_xiliefenlei fl on it.FItemID=fl.Series
+join t_xiliefenleiEntry fle on fl.FID=fle.FID 
+join (select *from t_ICItem where FDeleted=0) ic on fle.Material=ic.FItemID 
+join (select *from ICBOM where FCancellation=0 and FForbid=0) bom on bom.FItemID=ic.FItemID
+join ICBOMChild bomc on bom.FInterID= bomc.FInterID
+join (select *from t_ICItem where FDeleted=0) icic on bomc.FItemID=icic.FItemID 
+where it.FName='" + arr[1] + "'";
+        DataTable dtResult = Program.GetDataTableBySqlText(strSql);
+        string Jsonstring = string.Empty;
+        if (dtResult != null && dtResult.Rows.Count > 0)
+        {
+            Jsonstring = JsonConvert.SerializeObject(dtResult);
+        }
+        else
+        {
+            Jsonstring = JsonConvert.SerializeObject("");
+        }
+        return Jsonstring;
+    }
+
+    [WebMethod]
+    public static string GetSupplierByMaterial(string Material)
+    {
+        string[] arr = Material.Split('|');
+        if (arr[0].Length == 0)
+        {
+            return "{}";
+        }
+        if (arr[0].ToString() == "")
+        {
+            return "{}";
+        }
+        string strSql = @"select per.FNumber+'|'+per.FName as supname from t_supply su join t_ICItem ic on su.FItemID=ic.FItemID
+join t_Supplier per on FSupID=per.FItemID where ic.FNumber='" + arr[0] + "'";
+        DataTable dtResult = Program.GetDataTableBySqlText(strSql);
+        string Jsonstring = string.Empty;
+        if (dtResult != null && dtResult.Rows.Count > 0)
+        {
+            Jsonstring = JsonConvert.SerializeObject(dtResult);
+        }
+        else
+        {
+            Jsonstring = JsonConvert.SerializeObject("");
+        }
+        return Jsonstring;
+    }
+
+    protected void tbxl_TextChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void matname_TextChanged(object sender, EventArgs e)
+    {
+        TextBox matname = (TextBox)(sender);
+       Label FModel=(Label) matname.FindControl("FModel");
+    }
+}

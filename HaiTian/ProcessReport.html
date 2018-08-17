@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="name" content="pr">
+<title></title>
+<link rel="stylesheet" href="jquery/jquery-ui-1.12.1.custom/jquery-ui.css">
+<script src="jquery/jquery-1.11.3/jquery.js"></script>
+<script src="jquery/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+<script src="Guriddo_jqGrid_JS_5.2.1/src/i18n/grid.locale-cn.js"></script>
+<script src="Guriddo_jqGrid_JS_5.2.1/js/jquery.jqGrid.min.js"></script>
+<link rel="stylesheet" href="Guriddo_jqGrid_JS_5.2.1/css/ui.jqgrid.css" />
+<script type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+<link rel="stylesheet" href="css/HaiTian.css" />
+<script type="text/javascript" src="js/jquery.cookie.js"></script>
+<script src="js/public.js"></script>
+<script src="js/ProcessReport.js"></script>
+<script src="js/ProcessReportAppend.js"></script>
+
+<!--<script src="bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="bootstrap/3.3.4/css/bootstrap.min.css" />冲突-->
+</head>
+<body>
+<form id="form1">
+        <div id="Menu"></div>
+        <h1>工序计件汇报</h1>
+        <div>
+                <div class="header">
+                        <table id="header">
+                                <tr>
+                                        <td >工序汇报单</td>
+                                        <td ><input type="text" id="fbillno" class="form-control"></td>
+                                        <td >生产任务单</td>
+                                        <td ><input type="text" id="icmo" class="form-control"></td>
+                                        <td >物料代码</td>
+                                        <td ><input type="text" id="matnumber" class="form-control"></td>
+                                        <td><input ID="query" type="button" value="查询" class="btn btn-default" /></td>
+                                </tr>
+                                <tr>
+                                        <td >开始时间</td>
+                                        <td ><input type="text" id="startdate" class="form-control"></td>
+                                        <td >结束时间</td>
+                                        <td ><input type="text" id="enddate" class="form-control"></td>
+                                        <td >是否已抛转</td>
+                                        <td ><select id="is-thrown" class="form-control">
+                                                        <option>ALL</option>
+                                                        <option value="1">是</option>
+                                                        <option value="0">否</option>
+                                                </select></td>
+                                </tr>
+                        </table>
+                </div>
+                <div class="btn-group">
+                        <input ID="add" type="button" value="新增" class="btn btn-default" />
+                        <input ID="edit" type="button" value="编辑" class="btn btn-default" />
+                        <input ID="delete" type="button" value="删除" class="btn btn-default" />
+                        <input ID="submit" type="button" value="提交" class="btn btn-default" />
+                        <input ID="cancel" type="button" value="作废" class="btn btn-default" />
+                </div>
+                <table id="jqGrid">
+                </table>
+                <div id="jqGridPager"></div>
+        </div>
+</form>
+<div style="display: none;" id="dialog-modal" title="工序汇报">
+        <table>
+                <tbody>
+                        <tr>
+                                <td><label>单据编号</label></td>
+                                <td><input type="text" id="billno" class="form-control" disabled=disabled></td>
+                                <td><label>单据日期</label></td>
+                                <td><input type="text" id="billdate" class="form-control"></td>
+                                <td><label>制单人</label></td>
+                                <td><input type="text" id="biller" class="form-control" readonly=true></td>
+                        </tr>
+                        <tr>
+                                <td><label>工单</label></td>
+                                <td><input type="text" id="mo" class="form-control" readonly=true></td>
+                                <td><label>工序计划单</label></td>
+                                <td><input type="text" id="processplan" class="form-control" readonly=true></td>
+                                <td><label>计划数量</label></td>
+                                <td><input type="text" id="plan-num" class="form-control" readonly=true></td>
+                                <td><label>已汇报数量</label></td>
+                                <td><input type="text" id="Rpt-Num" class="form-control" readonly=true></td>
+                        </tr>
+                        <tr>
+                                <td><label>加工说明</label></td>
+                                <td><input type="text" id="FOperNote" class="form-control" readonly=true></td>
+
+                                <td><label>物料代码</label></td>
+                                <td><input type="text" id="mat-number" class="form-control" readonly=true></td>
+                                <td><label>物料名称</label></td>
+                                <td><input type="text" id="mat-name" class="form-control" readonly=true></td>
+                        </tr>
+                        <tr>
+                                <td><label>工序代码</label></td>
+                                <td><input type="text" id="process-code" class="form-control" readonly=true></td>
+                                <td><label>工序名称</label></td>
+                                <td><input type="text" id="process-name" class="form-control" readonly=true></td>
+                                <td><label>是工段</label></td>
+                                <td><input type="text" id="is-section" class="form-control" readonly=true></td>
+                        </tr>
+                </tbody>
+        </table>
+        <div class="btn-group">
+                <input ID="modal-add" type="button" value="新增" class="btn btn-default" />
+                <input ID="modal-edit" type="button" value="编辑" class="btn btn-default" />
+                <input ID="modal-delete" type="button" value="删除" class="btn btn-default" />
+        </div>
+        <table id="prGrid">
+        </table>
+        <div id="prGridPager"></div>
+</div>
+<div style="display: none" id="mo-modal" title="工单">
+        <div>
+                <label>工单编号</label>
+                <input id="inputmo" class="form-control">
+                <input type="button" value="查询" id="query-mo">
+        </div>
+        <hr>
+        <table id="moGrid">
+        </table>
+        <div id="moGridPager"></div>
+</div>
+<div style="display: none" id="plan-modal" title="工序计划单">
+        <div>
+                <label>工单编号</label>
+                <input id="plan-mo" class="form-control">
+                <label>工序计划单编号</label>
+                <input id="inputplan" class="form-control">
+                <input type="button" value="查询" id="query-plan">
+        </div>
+        <hr>
+        <table id="planGrid">
+        </table>
+        <div id="planGridPager"></div>
+</div>
+<div style="display: none;" id="entry-modal" title="编辑">
+        <table>
+                <tbody>
+                        <tr>
+                                <td><label>行号</label></td>
+                                <td><input type="text" id="entryID" class="form-control" disabled=disabled></td>
+                        </tr>
+                        <tr>
+                                <td><label>操作工</label></td>
+                                <td><input type="text" id="entry-emp" class="form-control" readonly=true></td>
+                        </tr>
+                        <tr>
+                                <td><label>操作工姓名</label></td>
+                                <td><input type="text" id="entry-empname" class="form-control" readonly=true></td>
+                        </tr>
+                        <tr>
+                                <td><label>实作数量</label></td>
+                                <td><input type="text" id="entry-finishqty" class="form-control"></td>
+                        </tr>
+                </tbody>
+        </table>
+</div>
+</body>
+</html>

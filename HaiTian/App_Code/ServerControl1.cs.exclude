@@ -1,0 +1,137 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+//自定义web服务器button  
+namespace ServerControl1
+{
+    [DefaultProperty("Text")]
+    [ToolboxData("<{0}:ServerControl1 runat=server></{0}:ServerControl1>"),Designer("System.Web.UI.Design.WebControls.PreviewControlDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+    public class ServerControl1 : WebControl
+    {
+        [Bindable(true)]
+        [Category("Appearance")]
+        [DefaultValue("")]
+        [Localizable(true)]
+        public string Text
+        {
+            get
+            {
+                String s = (String)ViewState["Text"];
+                return ((s == null) ? String.Empty : s);
+            }
+
+            set
+            {
+                ViewState["Text"] = value;
+            }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]//生成属性时，按属性内部内容生成(例如在此控件里面(Size-Height,Size_Width))  
+        //[PersistenceMode(PersistenceMode.InnerProperty)]//以子标签的形式显示(例如<Size Width="" Height=""/>)  
+        public Size Size
+        {
+            get
+            {
+                if (ViewState["Size"] == null)
+                {
+                    ViewState["Size"] = new Size();
+                }
+                return (Size)ViewState["Size"];
+            }
+
+            set
+            {
+                ViewState["Size"] = value;
+            }
+        }
+
+        public string width
+        {
+            get
+            {
+                if (ViewState["width"] == null)
+                {
+                    ViewState["width"] = "80";
+                }
+                return (string)ViewState["width"];
+            }
+
+            set
+            {
+                ViewState["width"] = value;
+            }
+        }
+
+        public string height
+        {
+            get
+            {
+                if (ViewState["height"] == null)
+                {
+                    ViewState["height"] = "30";
+                }
+                return (string)ViewState["height"];
+            }
+
+            set
+            {
+                ViewState["height"] = value;
+            }
+        }
+
+        //定义控件的标签形式
+        protected override HtmlTextWriterTag TagKey
+        {
+            get
+            {
+                return HtmlTextWriterTag.Input;
+            }
+        }
+
+        //初始化  
+        protected override void OnInit(EventArgs e)
+        {
+            this.Style.Add("width", width + "px");
+            this.Style.Add("height", height + "px");
+            this.Attributes.Add("type", "text"); //提交按钮 
+            this.Attributes.Add("value", Text);
+            this.Attributes.Add("name", this.UniqueID);//回发事件必须有的一个属性  
+            base.OnInit(e);
+        }
+        //打印当前控件的内容  
+        protected override void RenderContents(HtmlTextWriter output)
+        {
+            //output.Write(Text);  
+        }
+
+        public delegate void ClickHandle();
+        private object key = new object();
+        public event ClickHandle Click
+        {
+            add
+            {
+                this.Events.AddHandler(key, value);
+            }
+            remove
+            {
+                this.Events.RemoveHandler(key, value);
+            }
+        }
+        //按钮的回发事件  
+        public void RaisePostBackEvent(string eventArgument)
+        {
+            ClickHandle handle = (ClickHandle)base.Events[key];
+            if (handle != null)
+            {
+                handle();
+            }
+        }
+    }
+}

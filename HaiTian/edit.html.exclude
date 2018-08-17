@@ -1,0 +1,295 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+	<meta charset="utf-8" />
+    <link rel="stylesheet" href="jquery/jquery-ui-1.12.1.custom/jquery-ui.css">
+    <script src="jquery/jquery-1.11.3/jquery.js"></script>
+    <script src="jquery/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+    <script src="Guriddo_jqGrid_JS_5.2.1/src/i18n/grid.locale-cn.js"></script>
+    <script src="Guriddo_jqGrid_JS_5.2.1/js/jquery.jqGrid.min.js"></script>
+    <link rel="stylesheet" href="Guriddo_jqGrid_JS_5.2.1/css/ui.jqgrid.css" />
+    <script type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+
+    <link rel="stylesheet" href="css/ProductionPlan.css" />
+    <script src="js/websjy.js"></script>
+    <link rel="stylesheet" href="css/websjy.css" />
+
+    <script>
+        $(function () {
+            pageInit();
+        })
+        function pageInit() {
+
+            $(document).ready(function () {
+                $("#jqGrid").jqGrid({
+                    url: 'Search_CS.ashx',
+                    editurl: 'clientArray',
+                    mtype: "GET",
+                    datatype: "json",
+                    page: 1,
+                    colModel: [
+                        { label: 'fid', name: 'fid', width: 75 },
+                        {
+                            label: 'xilie', name: 'xilie', width: 75, editable: true, edittype: "custom",
+                            editoptions: {
+                                custom_value: myvalue,
+                                custom_element: myelem
+                            }
+
+                        },
+                        {
+                            label: 'material',
+                            name: 'material',
+                            width: 150,
+                            editable: true,
+                            edittype: "text",
+                            //editoptions: {
+                            //    // dataInit is the client-side event that fires upon initializing the toolbar search field for a column
+                            //    // use it to place a third party control to customize the toolbar
+                            //    dataInit: function (element) {
+                            //        $(element).bind("click", function () {
+                            //            WdatePicker({
+                            //                dateFmt: 'yyyy-MM-dd',
+                            //                maxDate: '2050-01-01',
+                            //                minDate: '1900-01-01',
+                            //            });
+                            //        });
+                            //    }
+                            //}
+                        },
+                         {
+                             label: 'supplier',
+                             name: 'supplier',
+                             width: 150,
+                             editable: true,
+                             edittype: "text",
+                             //editoptions: {
+                             //    value: "ALFKI:ALFKI;ANATR:ANATR;ANTON:ANTON;AROUT:AROUT;BERGS:BERGS;BLAUS:BLAUS;BLONP:BLONP;BOLID:BOLID;BONAP:BONAP;BOTTM:BOTTM;BSBEV:BSBEV;CACTU:CACTU;CENTC:CENTC;CHOPS:CHOPS;COMMI:COMMI;CONSH:CONSH;DRACD:DRACD;DUMON:DUMON;EASTC:EASTC;ERNSH:ERNSH;FAMIA:FAMIA;FISSA:FISSA;FOLIG:FOLIG;FOLKO:FOLKO;FRANK:FRANK;FRANR:FRANR;FRANS:FRANS;FURIB:FURIB;GALED:GALED;GODOS:GODOS;GOURL:GOURL;GREAL:GREAL;GROSR:GROSR;HANAR:HANAR;HILAA:HILAA;HUNGC:HUNGC;HUNGO:HUNGO;ISLAT:ISLAT;KOENE:KOENE;LACOR:LACOR;LAMAI:LAMAI;LAUGB:LAUGB;LAZYK:LAZYK;LEHMS:LEHMS;LETSS:LETSS;LILAS:LILAS;LINOD:LINOD;LONEP:LONEP;MAGAA:MAGAA;MAISD:MAISD;MEREP:MEREP;MORGK:MORGK;NORTS:NORTS;OCEAN:OCEAN;OLDWO:OLDWO;OTTIK:OTTIK;PARIS:PARIS;PERIC:PERIC;PICCO:PICCO;PRINI:PRINI;QUEDE:QUEDE;QUEEN:QUEEN;QUICK:QUICK;RANCH:RANCH;RATTC:RATTC;REGGC:REGGC;RICAR:RICAR;RICSU:RICSU;ROMEY:ROMEY;SANTG:SANTG;SAVEA:SAVEA;SEVES:SEVES;SIMOB:SIMOB;SPECD:SPECD;SPLIR:SPLIR;SUPRD:SUPRD;THEBI:THEBI;THECR:THECR;TOMSP:TOMSP;TORTU:TORTU;TRADH:TRADH;TRAIH:TRAIH;VAFFE:VAFFE;VICTE:VICTE;VINET:VINET;WANDK:WANDK;WARTH:WARTH;WELLI:WELLI;WHITC:WHITC;WILMK:WILMK;WOLZA:WOLZA"
+                             //}
+                         },
+                        {
+                            label: 'Freigh',
+                            name: 'Freight',
+                            width: 150,
+                            editable: true,
+                            edittype: "custom",
+                            editoptions: {
+                                custom_value: getFreightElementValue,
+                                custom_element: createFreightEditElement
+                            }
+                        },
+                        {
+                            label: 'Ship Name',
+                            name: 'ShipName',
+                            width: 150,
+                            editable: true,
+                            edittype: "text",
+                            editoptions: {
+                                // dataInit is the client-side event that fires upon initializing the toolbar search field for a column
+                                // use it to place a third party control to customize the toolbar
+                                dataInit: function (element) {
+                                    window.setTimeout(function () {
+                                        $(element).autocomplete({
+                                            id: 'AutoComplete',
+                                            source: function (request, response) {
+                                                this.xhr = $.ajax({
+                                                    url: 'http://trirand.com/blog/phpjqgrid/examples/jsonp/autocompletep.php?callback=?&acelem=ShipName',
+                                                    data: request,
+                                                    dataType: "jsonp",
+                                                    success: function (data) {
+                                                        response(data);
+                                                    },
+                                                    error: function (model, response, options) {
+                                                        response([]);
+                                                    }
+                                                });
+                                            },
+                                            autoFocus: true
+                                        });
+                                    }, 100);
+                                }
+                            }
+                        }
+                    ],
+                    loadonce: true,
+                    viewrecords: true,
+                    width: 780,
+                    height: 250,
+                    rowNum: 10,
+                    pager: "#jqGridPager"
+                });
+
+                $("#jqGrid").navGrid("#jqGridPager",
+                    { edit: true, add: true, del: true, search: false, refresh: true, view: false, align: "left" },
+                    {
+                        beforeSubmit: function (postdata, form, oper) {
+                            if (confirm('Are you sure you want to update this row?')) {
+
+                                postdata = '[' + JSON.stringify(postdata) + ']';
+                                $.ajax({
+                                    type: "Post",
+                                    url: "ChanPinXiLie.aspx/EditChanPinXiLieData",
+                                    //context: document.body,//为所有 AJAX 相关的回调函数规定 "this" 值
+                                    data: "{PostData:'" + postdata + "',pwd:'" + sel + "'}",
+                                    //data: JSON.stringify({"salesOrder":"XSDD000064"}),
+                                    //data: "",
+                                    contentType: "application/json; charset=utf-8",//发送数据到服务器时所使用的内容类型。默认是："application/x-www-form-urlencoded"
+                                    dataType: "json",//预期的服务器响应的数据类型
+                                    success: function (data) {
+                                        //alert(data.d)
+                                        obj = eval("(" + data.d + ")");
+
+                                        return [true, '修改成功!'];
+
+                                    },
+                                    error: function (xhr, status, error) {
+                                        return [false, 'You can not submit!'];
+                                    },
+                                    complete: function (data) { //alert(data.responseText)
+                                    }
+                                });
+                                // do something
+                                return [true, '修改成功!'];
+
+                            } else {
+                                return [false, 'You can not submit!'];
+                            }
+                        },
+                        closeAfterEdit: false,
+                        reloadAfterSubmit: true//提交完重新加载
+                    },
+                {
+                    beforeSubmit: function (postdata, form, oper) {
+                        if (confirm('Are you sure you want to add this row?')) {
+
+                            postdata = '[' + JSON.stringify(postdata) + ']';
+                            $.ajax({
+                                type: "Post",
+                                url: "ChanPinXiLie.aspx/AddChanPinXiLieData",
+                                //context: document.body,//为所有 AJAX 相关的回调函数规定 "this" 值
+                                data: "{PostData:'" + postdata + "',pwd:'" + sel + "'}",
+                                //data: JSON.stringify({"salesOrder":"XSDD000064"}),
+                                //data: "",
+                                contentType: "application/json; charset=utf-8",//发送数据到服务器时所使用的内容类型。默认是："application/x-www-form-urlencoded"
+                                dataType: "json",//预期的服务器响应的数据类型
+                                success: function (data) {
+                                    //alert(data.d)
+                                    obj = eval("(" + data.d + ")");
+
+                                    return [true, '修改成功!'];
+
+                                    $("#jqGrid").jqGrid('clearGridData');  //清空表格
+                                    $("#jqGrid").trigger("reloadGrid");
+
+                                },
+                                error: function (xhr, status, error) {
+                                    return [false, 'You can not submit!'];
+                                },
+                                complete: function (data) { //alert(data.responseText)
+                                }
+                            });
+                            // do something
+                            return [true, '修改成功!'];
+
+                        } else {
+                            return [false, 'You can not submit!'];
+                        }
+                    },
+                    closeAfterAdd: true,
+                    reloadAfterSubmit: false//提交完重新加载
+                }
+
+                );
+
+                function createFreightEditElement(value, editOptions) {
+
+                    var span = $("<span />");
+                    var label = $("<span />", { html: "0" });
+                    var radio = $("<input>", { type: "radio", value: "0", name: "freight", id: "zero", checked: (value != 25 && value != 50 && value != 100) });
+                    var label1 = $("<span />", { html: "25" });
+                    var radio1 = $("<input>", { type: "radio", value: "25", name: "freight", id: "fifty", checked: value == 25 });
+                    var label2 = $("<span />", { html: "50" });
+                    var radio2 = $("<input>", { type: "radio", value: "50", name: "freight", id: "fifty", checked: value == 50 });
+                    var label3 = $("<span />", { html: "100" });
+                    var radio3 = $("<input>", { type: "radio", value: "100", name: "freight", id: "hundred", checked: value == 100 });
+
+                    span.append(label).append(radio).append(label1).append(radio1).append(label2).append(radio2).append(label3).append(radio3);
+
+                    return span;
+                }
+
+                // The javascript executed specified by JQGridColumn.EditTypeCustomGetValue when EditType = EditType.Custom
+                // One parameter passed - the custom element created in JQGridColumn.EditTypeCustomCreateElement
+                function getFreightElementValue(elem, oper, value) {
+                    if (oper === "set") {
+                        var radioButton = $(elem).find("input:radio[value='" + value + "']");
+                        if (radioButton.length > 0) {
+                            radioButton.prop("checked", true);
+                        }
+                    }
+
+                    if (oper === "get") {
+                        return $(elem).find("input:radio:checked").val();
+                    }
+                }
+
+                function myelem(value, options) {
+                    var el = document.createElement("input");
+                    //el.type = "password";
+                    el.value = value;
+
+                    $.ajax({
+                        type: "Post",
+                        url: "ChanPinXiLie.aspx/GetXiLieName",
+                        //context: document.body,//为所有 AJAX 相关的回调函数规定 "this" 值
+                        data: "{no:'" + "" + "',pwd:'" + sel + "'}",
+                        //data: JSON.stringify({"salesOrder":"XSDD000064"}),
+                        //data: "",
+                        contentType: "application/json; charset=utf-8",//发送数据到服务器时所使用的内容类型。默认是："application/x-www-form-urlencoded"
+                        dataType: "json",//预期的服务器响应的数据类型
+                        success: function (data) {
+                            //alert(data.d)
+                            obj = eval("(" + data.d + ")");
+
+                            //alert(data.d)
+                            for (i = 0; i < obj.length; i++) {
+                                arr_prd[i] = obj[i].xiliename;
+                            }
+
+
+                        },
+                        error: function (xhr, status, error) {
+                            alert(error)
+                        },
+                        complete: function (data) { //alert(data.responseText)
+                        }
+                    });
+
+
+                    //el.onclick = function () { el.focus(); el.select(); };
+                    //alert("myelem: "+value);
+                    return el;
+                };
+
+                function myvalue(elem, operation, value) {
+                    //alert("myvalue: "+value);
+                    if (operation === 'get') {
+                        return $(elem).val();
+                    } else if (operation === 'set') {
+                        $(elem).val(value);
+                    }
+                };
+
+            });
+        }
+
+    </script>
+</head>
+<body>
+    <table id="jqGrid"></table>
+    <div id="jqGridPager"></div>
+
+</body>
+</html>

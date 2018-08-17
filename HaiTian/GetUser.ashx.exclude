@@ -1,0 +1,42 @@
+﻿<%@ WebHandler Language="C#" Class="GetUser" %>
+
+using System;
+using System.Web;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Text;
+using System.Data;
+using HaiTian;
+using SQL;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+public class GetUser : IHttpHandler
+{
+
+    public void ProcessRequest(HttpContext context)
+    {
+        string username = context.Request.QueryString["username"];
+
+        string Msg = "";
+        string str = "select FUserID,FName,FDescription from t_User where 1=1";
+
+        if (username != null && username != "" && username != "undefined")
+        {
+            str += " and FName like '%" + username + "%'";
+        }
+
+        DataTable dtResult = SQLServer.GetDataTable(str, ref Msg);
+
+        string jsondata = ClassHaiTian.GetJQGridJSONData(dtResult);
+        context.Response.Write(jsondata);
+    }
+
+    public bool IsReusable
+    {
+        get
+        {
+            return false;
+        }
+    }
+}

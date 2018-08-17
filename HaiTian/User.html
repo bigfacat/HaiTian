@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="name" content="user">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title></title>
+<link rel="stylesheet" href="jquery/jquery-ui-1.12.1.custom/jquery-ui.css">
+<script src="jquery/jquery-1.11.3/jquery.js"></script>
+<script src="jquery/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+<script src="Guriddo_jqGrid_JS_5.2.1/src/i18n/grid.locale-cn.js"></script>
+<script src="Guriddo_jqGrid_JS_5.2.1/js/jquery.jqGrid.min.js"></script>
+<link rel="stylesheet" href="Guriddo_jqGrid_JS_5.2.1/css/ui.jqgrid.css" />
+<script type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+<link rel="stylesheet" href="css/HaiTian.css" />
+<script type="text/javascript" src="js/jquery.cookie.js"></script>
+<script src="js/public.js"></script>
+<script src="js/User.js"></script>
+
+
+<!--<script src="bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="bootstrap/3.3.4/css/bootstrap.min.css" />冲突-->
+</head>
+<body>
+<form id="form1">
+        <h1>用户管理</h1>
+        <div id="tabs">
+                <ul>
+                        <li><a href="#tabs-user">用户管理</a></li>
+                        <li><a href="#tabs-role">角色管理</a></li>
+                                                <li><a href="#tabs-permission">权限管理</a></li>
+                                                <li><a href="#tabs-function">功能管理</a></li>
+
+                </ul>
+                <div id="tabs-user">
+                        <div>
+                                <div class="header">
+                                        <table id="header">
+                                                <tr>
+                                                        <td><label for="username">用户名</label></td>
+                                                        <td><input id="username" class="form-control"></td>
+                                                        <td><input ID="query" type="button" value="查询" class="btn btn-default" /></td>
+                                                </tr>
+                                        </table>
+                                </div>
+                                <div class="btn-group">
+                                        <input ID="add" type="button" value="新增" class="btn btn-default" />
+                                        <input ID="delete" type="button" value="删除" class="btn btn-default" />
+                                        <input ID="edit-password" type="button" value="修改密码" class="btn btn-default" />
+                                        <input ID="change-role" type="button" value="变更角色" class="btn btn-default" />
+                                </div>
+                                <table id="jqGrid">
+                                </table>
+                                <div id="jqGridPager"></div>
+                        </div>
+                </div>
+                <div id="tabs-role">
+                        <div id="role-div">
+                                <div class="header">
+                                        <table>
+                                                <tr>
+                                                        <td><label>角色名</label></td>
+                                                        <td><input id="rolename" class="form-control"></td>
+                                                        <td><input ID="query-role" type="button" value="查询" class="btn btn-default" /></td>
+                                                </tr>
+                                        </table>
+                                </div>
+                                <div class="btn-group" id="role-button-toggle">
+                                        <input ID="role-add" type="button" value="新增" class="btn btn-default" />
+                                        <input ID="role-edit" type="button" value="修改" class="btn btn-default" />
+                                        <input ID="role-delete" type="button" value="删除" class="btn btn-default" />
+                                </div>
+                                <table id="roleGrid">
+                                </table>
+                                <div id="roleGridPager"></div>
+                        </div>
+                </div>
+                                <div id="tabs-permission">
+                        <div>
+                                <div class="header">
+                                        <table>
+                                                <tr>
+                                                        <td><label>角色名</label></td>
+                                                        <td><input id="permission-rolename" class="form-control"></td>
+                                                        <td><input ID="query-permission" type="button" value="查询" class="btn btn-default" /></td>
+                                                </tr>
+                                        </table>
+                                </div>
+                                <div class="btn-group">
+                                        <input ID="permission-edit" type="button" value="修改" class="btn btn-default" />
+                                </div>
+                                <table id="perGrid">
+                                </table>
+                                <div id="perGridPager"></div>
+                        </div>
+                </div>
+                                                <div id="tabs-function">
+                        <div>
+                                <div class="header">
+                                        <table>
+                                                <tr>
+                                                        
+                                                        <td><input ID="query-function" type="button" value="查询" class="btn btn-default" /></td>
+                                                </tr>
+                                        </table>
+                                </div>
+                                <table id="funGrid">
+                                </table>
+                                <div id="funGridPager"></div>
+                        </div>
+                </div>
+
+        </div>
+</form>
+<div style="display: none;" id="dialog-modal" title="操作">
+        <table>
+                <tbody>
+                        <tr>
+                                <td><label>用户名</label></td>
+                                <td><input type="text" id="modal-user" class="form-control" readonly=true></td>
+                        <tr>
+                                <td><label>密码</label></td>
+                                <td><input type="password" id="modal-password" class="form-control"></td>
+                        </tr>
+                        <tr>
+                                <td><label>重复密码</label></td>
+                                <td><input type="password" id="modal-password-repeat" class="form-control"></td>
+                        </tr>
+                                                <tr>
+                                <td><label>所属角色</label></td>
+                                <td><input type="text" id="belong-role" class="form-control" readonly></td>
+                        </tr>
+
+                </tbody>
+        </table>
+</div>
+<div style="display: none;" id="edit-modal" title="修改密码">
+        <table>
+                <tbody>
+                        <tr>
+                                <td><label>用户名</label></td>
+                                <td><input type="text" id="user-edit" class="form-control" readonly=true></td>
+                        <tr>
+                                <td><label>密码</label></td>
+                                <td><input type="password" id="password-edit" class="form-control"></td>
+                        </tr>
+                        <tr>
+                                <td><label>重复密码</label></td>
+                                <td><input type="password" id="password-repeat-edit" class="form-control"></td>
+                        </tr>
+                </tbody>
+        </table>
+</div>
+<div style="display: none" id="user-modal" title="用户">
+        <div>
+                <label>用户名</label>
+                <input id="input-user" class="form-control">
+                <input type="button" value="查询" id="query-user">
+        </div>
+        <hr>
+        <table id="userGrid">
+        </table>
+        <div id="userGridPager"></div>
+</div>
+<div style="display: none" id="role-modal" title="角色">
+        <div>
+                <table>
+                        <tr>
+                                <td><label>角色名</label></td>
+                                   <td>     <input id="role-name" class="form-control"></td>
+                                                            <td><label style="float:right">备注</label></td>
+                                     <td>   <input id="role-remark" class="form-control long-input"></td>
+
+                        </tr>
+                        <tr>
+
+                        </tr>
+                                                                                               <tr>
+                                                                                                <td><label>创建人</label></td>
+                                       <td> <input id="role-creator" class="form-control" disabled=disabled></td>
+                                <td><label>创建时间</label></td>
+                                     <td>   <input id="role-createdate" class="form-control" disabled=disabled></td>
+</tr>
+                </table>
+        </div>
+        <hr>
+</div>
+<div style="display:none;" id="per-modal">
+<div id="DoubleGrid">
+        <div class="inline">
+                <table id="notHaveGrid">
+                </table>
+                <div id="notHaveGridPager"></div>
+        </div>
+        <div class="inline" style="width: 10px"></div>
+        <div class="inline">
+                <table id="haveGrid">
+                </table>
+                <div id="haveGridPager"></div>
+        </div>
+</div>
+</div>
+</body>
+</html>
