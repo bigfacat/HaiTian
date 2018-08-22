@@ -510,7 +510,7 @@ function initprGridModal(){
                 var ret = prGrid[i];
                 var obj = new Object();
 
-                if (isNaN(ret.finishqty) == true) {
+                if (ret.finishqty=="" || isNaN(ret.finishqty) == true) {
                     $("#msg").text("实作数量不是数字！");
                     $("#alert").dialog({
                         modal: true,
