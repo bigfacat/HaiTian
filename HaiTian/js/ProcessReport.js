@@ -231,8 +231,8 @@ function initprGridModal(){
                     name: 'finishqty',
                     width: 75,
                     editable: true,
-                    edittype: "text"
-
+                    edittype: "text",
+                    formatter:"number"
                 }, ],
                 loadonce: true,
                 viewrecords: true,

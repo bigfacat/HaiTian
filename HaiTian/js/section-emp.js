@@ -9,13 +9,11 @@
      $("#new-year").val(year);
      $("#new-month").val(month);
 
-
-     function LoadGridData(GridID, URL) {
-
-         var GridPagerID = GridID + "Pager";
+function initMainGrid(GridID){
+             var GridPagerID = GridID + "Pager";
 
          $(GridID).jqGrid({
-             url: URL,
+             //url: URL,
              //editurl: 'clientArray',
              mtype: "GET",
              datatype: "json",
@@ -79,6 +77,12 @@
 
          jQuery(GridID).jqGrid('setFrozenColumns');
 
+}
+     initMainGrid("#jqGrid")
+     
+     function LoadGridData(GridID, URL) {
+
+
          $(GridID).jqGrid('clearGridData'); //清空表格
 
 
@@ -104,9 +108,8 @@
 
          LoadGridData("#jqGrid", url);
 
-     });
+     })
 
-     $("#query").click();
 
      $("#section,#modal-section").click(function () {
 
@@ -723,6 +726,18 @@
          })
 
          $("#query-emp").click();
+
+        $("#emp-modal").dialog({
+        autoOpen: false,
+        width: "auto",
+        modal: true,
+        buttons: {
+
+            取消: function () {
+                $(this).dialog("close");
+            }
+        }
+    })
 
          $("#emp-modal").dialog("open")
 
