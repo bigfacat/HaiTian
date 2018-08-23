@@ -1225,9 +1225,8 @@ var page=parseInt(obj.Page);
         //height:500,
         buttons: {
             "确认": function () {
-
+                var Grid=$("#empGrid")
                 ondblClickRowFunConfirm(Grid);
-                $(this).dialog("close");
             },
             取消: function () {
                 $(this).dialog("close");
