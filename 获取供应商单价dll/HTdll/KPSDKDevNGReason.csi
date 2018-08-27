@@ -1,0 +1,18 @@
+[History]
+1=#P0#=mb	#P1#=Show	#P2#=KPSDKDevNGReason/NGReason/Show	#P3#=	#P4#=	#P5#=MembMethodPrivate	#P6#=20160818103220	#P7#=0	#P8#=5	.
+2=#P0#=mb	#P1#=m_BillTransfer_LoadBillEnd	#P2#=KPSDKDevNGReason/NGReason/m_BillTransfer_LoadBillEnd	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20160608164640	#P7#=0	#P8#=0	.
+3=#P0#=mb	#P1#=Form_Unload	#P2#=KPSDKDevNGReason/FrmNGReason/Form_Unload	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20160605145709	#P7#=0	#P8#=20	.
+4=#P0#=mb	#P1#=cmdDelete_Click	#P2#=KPSDKDevNGReason/FrmNGReason/cmdDelete_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20160605142317	#P7#=0	#P8#=19	.
+5=#P0#=mb	#P1#=RetrieveNGReasonAndSetValue	#P2#=KPSDKDevNGReason/FrmNGReason/RetrieveNGReasonAndSetValue	#P3#=	#P4#=	#P5#=MembMethodPrivate	#P6#=20160605142100	#P7#=0	#P8#=10	.
+6=#P0#=mb	#P1#=myGrid_Click	#P2#=KPSDKDevNGReason/FrmNGReason/myGrid_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20160605141015	#P7#=0	#P8#=4	.
+7=#P0#=mb	#P1#=IsNumberic	#P2#=KPSDKDevNGReason/FrmNGReason/IsNumberic	#P3#=	#P4#=	#P5#=MembMethodPrivate	#P6#=20160605140435	#P7#=0	#P8#=5	.
+8=#P0#=mb	#P1#=cmdSave_Click	#P2#=KPSDKDevNGReason/FrmNGReason/cmdSave_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20160605135745	#P7#=0	#P8#=12	.
+9=#P0#=mb	#P1#=cmdReason_Click	#P2#=KPSDKDevNGReason/FrmNGReason/cmdReason_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20160605135542	#P7#=0	#P8#=5	.
+10=#P0#=mb	#P1#=cmdReset_Click	#P2#=KPSDKDevNGReason/FrmNGReason/cmdReset_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20160605135511	#P7#=0	#P8#=8	.
+11=#P0#=mb	#P1#=Form_Activate	#P2#=KPSDKDevNGReason/FrmNGReason/Form_Activate	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20160605134907	#P7#=0	#P8#=1	.
+12=#P0#=mb	#P1#=RetrieveReasonAndSetValue	#P2#=KPSDKDevNGReason/FrmReason/RetrieveReasonAndSetValue	#P3#=	#P4#=	#P5#=MembMethodPrivate	#P6#=20160605133535	#P7#=0	#P8#=20	.
+13=#P0#=mb	#P1#=myGrid_DblClick	#P2#=KPSDKDevNGReason/FrmReason/myGrid_DblClick	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20160605130959	#P7#=0	#P8#=-1	.
+14=#P0#=mb	#P1#=Form_Load	#P2#=KPSDKDevNGReason/FrmReason/Form_Load	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20160605130945	#P7#=0	#P8#=-2	.
+15=#P0#=mb	#P1#=m_BillTransfer_UserMenuClick	#P2#=KPSDKDevNGReason/NGReason/m_BillTransfer_UserMenuClick	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20160605130607	#P7#=0	#P8#=42	.
+16=#P0#=mb	#P1#=m_BillTransfer_BillInitialize	#P2#=KPSDKDevNGReason/NGReason/m_BillTransfer_BillInitialize	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20170915112620	#P7#=0	#P8#=3	.
+17=#P0#=mb	#P1#=m_BillTransfer_LeveCell	#P2#=KPSDKDevNGReason/NGReason/m_BillTransfer_LeveCell	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20160605095654	#P7#=0	#P8#=7	.
